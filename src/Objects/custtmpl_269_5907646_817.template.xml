@@ -2,7 +2,7 @@
 <pdf>
     <#setting locale = "es_MX">
     <#setting time_zone= "America/Mexico_City">
-    <#setting number_format=",##0.00">
+    <#--  <#setting number_format=",##0.00">  -->
 
     <#assign "dataXML" = "">
     <#if custom?has_content>
@@ -337,7 +337,7 @@
         <#else>
             <#assign "desglosa_cliente" = record.entity.custentity_efx_cmp_registra_ieps>
         </#if>
-    
+
     <#assign "tipoGBL" = record.custbody_efx_fe_gbl_type>
     <#assign "desglose_json_body" = record.custbody_efx_fe_tax_json>
 
@@ -462,6 +462,11 @@
                             <td class="cuerpotablaetiqueta">Dirección:</td>
                             <td class="cuerpotablainfo">${record.billaddress?upper_case}</td>
                         </tr>
+
+                        <tr>
+                            <td class="cuerpotablaetiqueta">Régimen Fiscal:</td>
+                            <td class="cuerpotablainfo">${record.entity.custentity_mx_sat_industry_type?upper_case}</td>
+                        </tr>
                     </table>
                 </td>
                 <td></td>
@@ -499,27 +504,27 @@
         </tr>
     </table>
 
-  <table class="tablascompletas" style="margin-top:5px;">
-  <tr>
-    <td colspan="4" class="cabecera"><b>Términos de crédito</b></td>
-    <td colspan="4" class="cabecera"><b>OC de Cliente</b></td>
-    <td colspan="4" class="cabecera"><b>Orden de venta</b></td>
-    <td colspan="4" class="cabecera"><b>Cotizaci&oacute;n</b></td>
-    <!--<td colspan="3" class="cabecera"><b>OC de cliente</b></td>-->
-</tr>
-    <tr>
-        <td colspan="4" class="cuerposnoarticulos">${record.entity.terms}</td>
-        <td colspan="4" class="cuerposnoarticulos">${record.otherrefnum}</td>
-        <td colspan="4" class="cuerposnoarticulos">${record.createdfrom?keep_after("#")}</td>
-        <td colspan="4" class="cuerposnoarticulos">${record.createdfrom.createdfrom?keep_after("#")}</td>
-		<!--<#if record.custbody_efx_nota_interna?has_content>
-        		<td colspan="3" class="cuerposnoarticulos">${record.custbody_efx_nota_interna}</td>
-          <#else>
-            	<td colspan="3" class="cuerposnoarticulos">${record.otherrefnum}</td>
-		</#if>-->
-    </tr>
-</table>
-      
+    <table class="tablascompletas" style="margin-top:5px;">
+        <tr>
+            <td colspan="4" class="cabecera"><b>Términos de crédito</b></td>
+            <td colspan="4" class="cabecera"><b>OC de Cliente</b></td>
+            <td colspan="4" class="cabecera"><b>Orden de venta</b></td>
+            <td colspan="4" class="cabecera"><b>Cotizaci&oacute;n</b></td>
+            <!--<td colspan="3" class="cabecera"><b>OC de cliente</b></td>-->
+        </tr>
+        <tr>
+            <td colspan="4" class="cuerposnoarticulos">${record.entity.terms}</td>
+            <td colspan="4" class="cuerposnoarticulos">${record.otherrefnum}</td>
+            <td colspan="4" class="cuerposnoarticulos">${record.createdfrom?keep_after("#")}</td>
+            <td colspan="4" class="cuerposnoarticulos">${record.createdfrom.createdfrom?keep_after("#")}</td>
+            <!--<#if record.custbody_efx_nota_interna?has_content>
+                    <td colspan="3" class="cuerposnoarticulos">${record.custbody_efx_nota_interna}</td>
+            <#else>
+                    <td colspan="3" class="cuerposnoarticulos">${record.otherrefnum}</td>
+            </#if>-->
+        </tr>
+    </table>
+
     <#assign arrayItems = []>
     <#list record.item as item>
         <#assign arrayItemsObj = {}>
@@ -533,115 +538,159 @@
     <#if dataXML?has_content>
         <#assign "total_piezas" = 0>
         <table class="itemtable" style="width: 100%; margin-top: 3px; border: 1px; border-color: #e3e3e3;">
-        <#if dataXML.Conceptos.Concepto?is_sequence>
-            <thead>
-            <tr>
-                <th align="center" colspan="2" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    Linea
-                </th>
-                <th align="center" colspan="4" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">SKU
-                    <br></br>Clave SAT
-                </th>
+            <#if dataXML.Conceptos.Concepto?is_sequence>
+                <thead>
+                    <tr>
+                        <th align="center" colspan="2" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            Linea
+                        </th>
+                        <th align="center" colspan="4" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">SKU
+                            <br></br>Clave SAT
+                        </th>
 
-                <th align="center" colspan="18"
-                    style="color: #000000; font-size: 7pt; padding-top: 1px;  padding-bottom: 1px;">
-                    <table class="desglose_table" style="width: 100%;">
-                        <tr>
-                            <th colspan="20" align="center" style="font-size: 7pt;  padding: 1px 0px 1px 0px">
-                                Descripción
-                            </th>
-                        </tr>
-                        <tr>
-                            <td colspan="5"
-                                style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
-                                Base
-                            </td>
-                            <td colspan="4"
-                                style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
-                                Impuesto
-                            </td>
-                            <td colspan="3"
-                                style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
-                                Factor
-                            </td>
-                            <td colspan="3"
-                                style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
-                                Tasa
-                            </td>
-                            <td colspan="5"
-                                style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
-                                Importe
-                            </td>
-                        </tr>
-                    </table>
-                </th>
+                        <th align="center" colspan="18"
+                            style="color: #000000; font-size: 7pt; padding-top: 1px;  padding-bottom: 1px;">
+                            <table class="desglose_table" style="width: 100%;">
+                                <tr>
+                                    <th colspan="20" align="center" style="font-size: 7pt;  padding: 1px 0px 1px 0px">
+                                        Descripción
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td colspan="5"
+                                        style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
+                                        Base
+                                    </td>
+                                    <td colspan="4"
+                                        style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
+                                        Impuesto
+                                    </td>
+                                    <td colspan="3"
+                                        style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
+                                        Factor
+                                    </td>
+                                    <td colspan="3"
+                                        style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
+                                        Tasa
+                                    </td>
+                                    <td colspan="5"
+                                        style="color: #000000; font-size: 6pt;  padding-top: 1px;  padding-bottom: 1px;">
+                                        Importe
+                                    </td>
+                                </tr>
+                            </table>
+                        </th>
 
-                <th align="center" colspan="3" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    Unidad<br></br>SAT<br></br>Unidad
-                </th>
+                        <th align="center" colspan="3" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            Unidad<br></br>SAT<br></br>Unidad
+                        </th>
 
-                <th align="center" colspan="5" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    UPC
-                </th>
-                <th align="center" colspan="3" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    Cant.
-                </th>
-                <th align="center" colspan="4" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    <center>Precio sin<br/>impuesto</center>
-                </th>
-                <th align="center" colspan="4" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    Impuesto
-                </th>
-                <th align="center" colspan="5" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    Descuento
-                </th>
-                <th align="center" colspan="5" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
-                    Subtotal
-                </th>
-            </tr>
+                        <th align="center" colspan="5" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            UPC
+                        </th>
+                        <th align="center" colspan="3" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            Cant.
+                        </th>
+                        <th align="center" colspan="4" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            <center>Precio sin<br/>impuesto</center>
+                        </th>
+                        <th align="center" colspan="4" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            Impuesto
+                        </th>
+                        <th align="center" colspan="5" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            Descuento
+                        </th>
+                        <th align="center" colspan="5" style="color: #000000; font-size: 7pt; padding: 1px 0px 1px 0px">
+                            Subtotal
+                        </th>
+                    </tr>
+                </thead>
+                <#assign lineacon = 0>
+                <#list dataXML.Conceptos.Concepto as Conceptos>
 
-            </thead>
-            <#assign lineacon = 0>
-            <#list dataXML.Conceptos.Concepto as Conceptos>
+                    <tr>
+                        <td align="center" colspan="2" line-height="150%"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px">${(lineacon+1)?string["0"]}
+                        </td>
+                        <td align="center" colspan="4" line-height="150%"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px; padding-right:0px; padding-left:0px">${arrayItems[lineacon].item?keep_before(" ")}
+                            <br></br>${Conceptos.atributos.ClaveProdServ}</td>
 
-                <tr>
-                    <td align="center" colspan="2" line-height="150%"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px">${(lineacon+1)?string["0"]}
-                    </td>
-                    <td align="center" colspan="4" line-height="150%"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px; padding-right:0px; padding-left:0px">${arrayItems[lineacon].item?keep_before(" ")}
-                        <br></br>${Conceptos.atributos.ClaveProdServ}</td>
+                        <td colspan="18"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 4pt padding-top:1px;"
+                            align="center">
+                            <table class="desglose_table" style="width: 100%;padding:0px;margin-top:-2px">
+                                <tr style="padding:0px 0px 0px 0px;">
+                                    <td colspan="20"
+                                        style="font-size: 7pt; padding:0px 0px;"><#outputformat "XML">${Conceptos.atributos.Descripcion}</#outputformat></td>
+                                </tr>
 
-                    <td colspan="18"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 4pt padding-top:1px;"
-                        align="center">
-                        <table class="desglose_table" style="width: 100%;padding:0px;margin-top:-2px">
-                            <tr style="padding:0px 0px 0px 0px;">
-                                <td colspan="20"
-                                    style="font-size: 7pt; padding:0px 0px;"><#outputformat "XML">${Conceptos.atributos.Descripcion}</#outputformat></td>
-                            </tr>
+                                <tr>
+                                    <td colspan="18" >
+                                        <table style="width: 100%; margin-top: 0px; margin-bottom: 0px;">
+                                            <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
+                                                <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
+                                                    <#list Conceptos.Impuestos.Traslados.Traslado as traslado_imp>
+                                                        <#assign tasaocuota = traslado_imp.atributos.TasaOCuota?number * 100>
+                                                        <#assign tipoimpuesto = "">
+                                                        <#if traslado_imp.atributos.Impuesto=="002">
+                                                                <#assign tipoimpuesto = "IVA">
+                                                            <#elseif traslado_imp.atributos.Impuesto=="003">
+                                                                <#assign tipoimpuesto = "IEPS">
+                                                        </#if>
+                                                            <#if traslado_imp.atributos.TipoFactor=="Exento">
+                                                                <#assign tipoimpuesto = "Exento">
+                                                                </#if>
+                                                        <#if traslado_imp.atributos.Impuesto=="003" && desglosa_cliente==false>
+                                                        <#else>
+                                                        <tr style="padding:0px 0px;">
+                                                            <td colspan="5"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${traslado_imp.atributos.Base?number?string[",##0.00"]}</td>
+                                                            <#if tipoimpuesto=="Exento">
+                                                            <td colspan="4"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
+                                                                ${tipoimpuesto}
+                                                            </td>
+                                                            <#else>
+                                                            <td colspan="4"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
+                                                                ${tipoimpuesto} ${tasaocuota?string["0"]}%
+                                                            </td>
+                                                            </#if>
+                                                            <td colspan="3"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${traslado_imp.atributos.Impuesto}</td>
+                                                            <#assign tasa_line = traslado_imp.atributos.TasaOCuota?number * 100>
+                                                            <#if tipoimpuesto=="Exento">
+                                                            <td align="right" colspan="4"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tipoimpuesto}
+                                                            </td>
+                                                            <#else>
+                                                            <td align="right" colspan="4"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tasa_line?string[",##0.00"]}
+                                                                %
+                                                            </td>
+                                                            </#if>
+                                                            <td align="right" colspan="5"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${traslado_imp.atributos.Importe?number?string[",##0.00"]}</td>
+                                                        </tr>
+                                                        </#if>
 
-                            <tr>
-                                <td colspan="18" style="border-left: 1px; border-color: #e3e3e3;">
-                                    <table style="width: 100%; margin-top: 0px; margin-bottom: 0px;">
-                                        <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
-                                            <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
-                                                <#list Conceptos.Impuestos.Traslados.Traslado as traslado_imp>
-                                                    <#assign tasaocuota = traslado_imp.atributos.TasaOCuota?number * 100>
+                                                    </#list>
+                                                <#else>
+
+                                                    <#assign tasaocuota = Conceptos.Impuestos.Traslados.Traslado.TasaOCuota?number * 100>
                                                     <#assign tipoimpuesto = "">
-                                                    <#if traslado_imp.atributos.Impuesto=="002">
-                                                            <#assign tipoimpuesto = "IVA">
-                                                        <#elseif traslado_imp.atributos.Impuesto=="003">
-                                                            <#assign tipoimpuesto = "IEPS">
+                                                    <#if Conceptos.Impuestos.Traslados.Traslado.atributos.Impuesto=="002">
+                                                        <#assign tipoimpuesto = "IVA">
+                                                    <#elseif Conceptos.Impuestos.Traslados.Traslado.Impuesto=="003">
+                                                        <#assign tipoimpuesto = "IEPS">
                                                     </#if>
-                                                          <#if traslado_imp.atributos.TipoFactor=="Exento">
-                                                            <#assign tipoimpuesto = "Exento">
-                                                              </#if>
-                                                    <#if traslado_imp.atributos.Impuesto=="003" && desglosa_cliente==false>
-                                                    <#else>
-                                                      <tr style="padding:0px 0px;">
+                                                    <#if Conceptos.Impuestos.Traslados.Traslado.TipoFactor=="Exento">
+                                                        <#assign tipoimpuesto = "Exento">
+                                                    </#if>
+                                                    <tr style="padding:0px 0px;">
                                                         <td colspan="5"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${traslado_imp.atributos.Base?number?string[",##0.00"]}</td>
+                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Base?number?string[",##0.00"]}</td>
                                                         <#if tipoimpuesto=="Exento">
                                                         <td colspan="4"
                                                             style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
@@ -654,8 +703,8 @@
                                                         </td>
                                                         </#if>
                                                         <td colspan="3"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${traslado_imp.atributos.Impuesto}</td>
-                                                        <#assign tasa_line = traslado_imp.atributos.TasaOCuota?number * 100>
+                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Impuesto}</td>
+                                                        <#assign tasa_line = Conceptos.Impuestos.Traslados.Traslado.atributos.TasaOCuota?number * 100>
                                                         <#if tipoimpuesto=="Exento">
                                                         <td align="right" colspan="4"
                                                             style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tipoimpuesto}
@@ -667,52 +716,241 @@
                                                         </td>
                                                         </#if>
                                                         <td align="right" colspan="5"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${traslado_imp.atributos.Importe?number?string[",##0.00"]}</td>
+                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Importe?number?string[",##0.00"]}</td>
                                                     </tr>
+                                                </#if>
+                                            </#if>
+
+                                            <#if Conceptos.Impuestos.Retenciones.Retencion?has_content>
+                                                <#if Conceptos.Impuestos.Retenciones.Retencion?is_sequence>
+                                                    <#list Conceptos.Impuestos.Retenciones.Retencion as ret_imp>
+                                                        <#assign tasaocuota = ret_imp.atributos.TasaOCuota?number * 100>
+                                                        <#assign tipoimpuesto = "">
+                                                        <#if ret_imp.atributos.Impuesto=="002">
+                                                            <#assign tipoimpuesto = "IVA">
+                                                        <#elseif ret_imp.atributos.Impuesto=="003">
+                                                            <#assign tipoimpuesto = "IEPS">
+                                                        </#if>
+                                                        <tr style="padding:0px 0px;">
+                                                            <td colspan="5"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${ret_imp.atributos.Base?number?string[",##0.00"]}</td>
+                                                            <td colspan="4"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
+                                                                ${tipoimpuesto} ${tasaocuota?string["0"]}%
+                                                            </td>
+                                                            <td colspan="3"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${ret_imp.atributos.Impuesto}</td>
+                                                            <#assign tasa_line = ret_imp.atributos.TasaOCuota?number * 100>
+                                                            <td align="right" colspan="4"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tasa_line?string[",##0.00"]}
+                                                                %
+                                                            </td>
+                                                            <td align="right" colspan="5"
+                                                                style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${ret_imp.atributos.Importe?number?string[",##0.00"]}</td>
+                                                        </tr>
+                                                    </#list>
+
+                                                <#else>
+                                                    <#assign tasaocuota = Conceptos.Impuestos.Retenciones.Retencion.TasaOCuota?number * 100>
+                                                    <#assign tipoimpuesto = "">
+                                                    <#if Conceptos.Impuestos.Retenciones.Retencion.atributos.Impuesto=="002">
+                                                        <#assign tipoimpuesto = "IVA">
+                                                    <#elseif Conceptos.Impuestos.Retenciones.Retencion.Impuesto=="003">
+                                                        <#assign tipoimpuesto = "IEPS">
                                                     </#if>
-                                                    
+                                                    <tr>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Base?number?string[",##0.00"]}</td>
+                                                        <td align="left" colspan="2"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Impuesto}</td>
+                                                        <#assign tasa_line = Conceptos.Impuestos.Retenciones.Retencion.atributos.TasaOCuota?number * 100>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
+                                                            %
+                                                        </td>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Importe?number?string[",##0.00"]}</td>
+                                                    </tr>
+                                                </#if>
+                                            </#if>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <#if Conceptos.InformacionAduanera.NumeroPedimento?has_content>
+                                    <tr style="padding:0px 0px;">
+                                        <td colspan="6" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">
+                                            <b>Pedimento:</b></td>
+                                        <td colspan="13"
+                                            style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.InformacionAduanera.NumeroPedimento}</td>
+                                    </tr>
+                                </#if>
+
+                                <#if Conceptos.atributos.ObjetoImp?has_content>
+                                    <tr style="padding:0px 0px;" align="center">
+                                        <td colspan="6"
+                                            style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;"><b>Objeto de impuesto:</b>
+                                        </td>
+                                        <#--  <td colspan="13" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${custcol_mx_txn_line_sat_tax_object}</td>  -->
+                                        <#if Conceptos.atributos.ObjetoImp?number == 1>
+                                            <#assign objImpDesc = "NO OBJETO DE IMPUESTO.">
+                                        <#elseif Conceptos.atributos.ObjetoImp?number == 2>
+                                            <#assign objImpDesc = "SÍ OBJETO DE IMPUESTO.">
+                                        <#elseif Conceptos.atributos.ObjetoImp?number == 3>
+                                            <#assign objImpDesc = "SÍ OBJETO DE IMPUESTO Y NO OBLIGATORIO AL DESGLOSE.">
+                                        </#if>
+                                        <td colspan="13" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.atributos.ObjetoImp} - ${objImpDesc}</td>
+                                    </tr>
+                                </#if>
+                            </table>
+                        </td>
+
+                        <td colspan="3"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.ClaveUnidad}<br></br> ${arrayItems[lineacon].units}</td>
+                        <td colspan="5"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 6pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.NoIdentificacion}</td>
+                        <td align="center" colspan="3" line-height="150%"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;">${Conceptos.atributos.Cantidad?number?string["0"]}</td>
+                        <#assign total_piezas += Conceptos.atributos.Cantidad?number>
+                        <td align="center" colspan="4"
+                            style="border-left: 1px; border-color: #e3e3e3; font-size:7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.ValorUnitario?number?string[",##0.00"]}</td>
+                        <#assign impuestos_line_calc = 0>
+                        <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
+                            <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
+                                <#list Conceptos.Impuestos.Traslados.Traslado as impuestos_linec>
+                                    <#assign impuestos_line_calc = impuestos_line_calc + impuestos_linec.atributos.Importe?number>
+                                </#list>
+                            <#else>
+                                <#assign impuestos_line_calc = impuestos_line_calc + Conceptos.Impuestos.Traslados.Traslado.atributos.Importe?number>
+                            </#if>
+                        </#if>
+                        <#if Conceptos.Impuestos.Retenciones.Retencion?has_content>
+                            <#if Conceptos.Impuestos.Retenciones.Retencion?is_sequence>
+                                <#list Conceptos.Impuestos.Retenciones.Retencion as impuestos_linec>
+                                    <#assign impuestos_line_calc = impuestos_line_calc - impuestos_linec.atributos.Importe?number>
+                                </#list>
+                            <#else>
+                                <#assign impuestos_line_calc = impuestos_line_calc - Conceptos.Impuestos.Retenciones.Retencion.atributos.Importe?number>
+                            </#if>
+                        </#if>
+                        <td align="center" colspan="4"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt;padding-top:2px;padding-right:0px; padding-left:0px">${impuestos_line_calc?string[",##0.00"]}</td>
+                        <td align="center" colspan="4"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.Descuento?number?string[",##0.00"]}</td>
+                        <td align="right" colspan="6"
+                            style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.Importe?number?string[",##0.00"]}</td>
+                    </tr>
+                    <#assign lineacon = lineacon+1>
+                </#list>
+            <#else>
+                <thead>
+                <tr style="margin-top: 0px; padding-top: 0px; padding-bottom: 0px">
+                    <th align="center" colspan="2" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
+                        Partida
+                    </th>
+                    <th align="center" colspan="5" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">Código<br/>Clave
+                    </th>
+                    <th align="center" colspan="18" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
+                        <table style="width: 100%; margin-top: 0px; margin-bottom: 0px; border: 1px; border-color: #e3e3e3">
+                            <tr>
+                                <th align="center" colspan="18"
+                                    style="font-size: 5pt; padding-top: 0px; padding-bottom: 2px; padding-left: 0px; padding-right: 0px;">
+                                    Descripción
+                                </th>
+                            </tr>
+                            <tr>
+                                <td colspan="18" style="border-left: 1px; border-color: #e3e3e3;">
+                                    <table style="width: 100%; margin-top: 0px; margin-bottom: 0px;">
+                                        <tr>
+                                            <td align="left" colspan="4"
+                                                style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Base:
+                                            </td>
+                                            <td align="left" colspan="3"
+                                                style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Factor:
+                                            </td>
+                                            <td align="left" colspan="3"
+                                                style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Tasa:
+                                            </td>
+                                            <td align="left" colspan="4"
+                                                style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Importe:
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </th>
+
+                    <th align="center" colspan="2" style="font-size: 4pt; padding-left: 0px; padding-right: 0px;">
+                        Unidad
+                    </th>
+                    <th align="center" colspan="5" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">UPC
+                    </th>
+                    <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
+                        Cantidad
+                    </th>
+                    <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">Precio
+                        sin<br/>impuesto
+                    </th>
+                    <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
+                        Impuesto
+                    </th>
+                    <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
+                        Descuento
+                    </th>
+                    <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
+                        Importe
+                    </th>
+                </tr>
+                </thead>
+
+                <tr>
+                    <td align="center" colspan="2" line-height="150%"
+                        style="border-left: 0px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px;">1
+                    </td>
+                    <td align="center" colspan="5" line-height="150%"
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding:0;">${arrayItems[0].item?keep_before(" ")}
+                        <br></br>${dataXML.Conceptos.Concepto.atributos.ClaveProdServ}</td>
+
+                    <td colspan="18" style="margin: 0; padding: 0;">
+                        <table style="width: 100%">
+                            <tr>
+                                <td colspan="18"
+                                    style="border-left: 1px; border-color: #e3e3e3; font-size: 6pt; padding-right: 1px; padding-left: 1px; padding-top: 1px; padding-bottom: 0px;"><#outputformat "XML">${dataXML.Conceptos.Concepto.atributos.Descripcion}</#outputformat></td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="18" style="border-left: 1px; border-color: #e3e3e3;">
+                                    <table style="width: 100%; margin-top: 0px; margin-bottom: 0px;">
+                                        <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
+                                            <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
+                                                <#list Conceptos.Impuestos.Traslados.Traslado as traslado_imp>
+                                                    <tr>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${traslado_imp.atributos.Base?number?string[",##0.00"]}</td>
+                                                        <td align="left" colspan="2"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${traslado_imp.atributos.Impuesto}</td>
+                                                        <#assign tasa_line = traslado_imp.atributos.TasaOCuota?number * 100>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
+                                                            %
+                                                        </td>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${traslado_imp.atributos.Importe?number?string[",##0.00"]}</td>
+                                                    </tr>
                                                 </#list>
                                             <#else>
-
-                                                <#assign tasaocuota = Conceptos.Impuestos.Traslados.Traslado.TasaOCuota?number * 100>
-                                                <#assign tipoimpuesto = "">
-                                                <#if Conceptos.Impuestos.Traslados.Traslado.atributos.Impuesto=="002">
-                                                    <#assign tipoimpuesto = "IVA">
-                                                <#elseif Conceptos.Impuestos.Traslados.Traslado.Impuesto=="003">
-                                                    <#assign tipoimpuesto = "IEPS">
-                                                </#if>
-                                                <#if Conceptos.Impuestos.Traslados.Traslado.TipoFactor=="Exento">
-                                                    <#assign tipoimpuesto = "Exento">
-                                                </#if>
-                                                <tr style="padding:0px 0px;">
-                                                    <td colspan="5"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Base?number?string[",##0.00"]}</td>
-                                                    <#if tipoimpuesto=="Exento">
-                                                    <td colspan="4"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
-                                                        ${tipoimpuesto}
-                                                    </td>
-                                                    <#else>
-                                                    <td colspan="4"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
-                                                        ${tipoimpuesto} ${tasaocuota?string["0"]}%
-                                                    </td>
-                                                    </#if>
-                                                    <td colspan="3"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Impuesto}</td>
+                                                <tr>
+                                                    <td align="left" colspan="4"
+                                                        style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Base?number?string[",##0.00"]}</td>
+                                                    <td align="left" colspan="2"
+                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Impuesto}</td>
                                                     <#assign tasa_line = Conceptos.Impuestos.Traslados.Traslado.atributos.TasaOCuota?number * 100>
-                                                    <#if tipoimpuesto=="Exento">
-                                                    <td align="right" colspan="4"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tipoimpuesto}
-                                                    </td>
-                                                    <#else>
-                                                    <td align="right" colspan="4"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tasa_line?string[",##0.00"]}
+                                                    <td align="left" colspan="4"
+                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
                                                         %
                                                     </td>
-                                                    </#if>
-                                                    <td align="right" colspan="5"
-                                                        style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Importe?number?string[",##0.00"]}</td>
+                                                    <td align="left" colspan="4"
+                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Importe?number?string[",##0.00"]}</td>
                                                 </tr>
                                             </#if>
                                         </#if>
@@ -720,40 +958,21 @@
                                         <#if Conceptos.Impuestos.Retenciones.Retencion?has_content>
                                             <#if Conceptos.Impuestos.Retenciones.Retencion?is_sequence>
                                                 <#list Conceptos.Impuestos.Retenciones.Retencion as ret_imp>
-                                                    <#assign tasaocuota = ret_imp.atributos.TasaOCuota?number * 100>
-                                                    <#assign tipoimpuesto = "">
-                                                    <#if ret_imp.atributos.Impuesto=="002">
-                                                        <#assign tipoimpuesto = "IVA">
-                                                    <#elseif ret_imp.atributos.Impuesto=="003">
-                                                        <#assign tipoimpuesto = "IEPS">
-                                                    </#if>
-                                                    <tr style="padding:0px 0px;">
-                                                        <td colspan="5"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${ret_imp.atributos.Base?number?string[",##0.00"]}</td>
-                                                        <td colspan="4"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">
-                                                            ${tipoimpuesto} ${tasaocuota?string["0"]}%
-                                                        </td>
-                                                        <td colspan="3"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${ret_imp.atributos.Impuesto}</td>
+                                                    <tr>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${ret_imp.atributos.Base?number?string[",##0.00"]}</td>
+                                                        <td align="left" colspan="2"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${ret_imp.atributos.Impuesto}</td>
                                                         <#assign tasa_line = ret_imp.atributos.TasaOCuota?number * 100>
-                                                        <td align="right" colspan="4"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${tasa_line?string[",##0.00"]}
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
                                                             %
                                                         </td>
-                                                        <td align="right" colspan="5"
-                                                            style="font-size: 6pt; padding-top: 1px;  padding-bottom: 1px;">${ret_imp.atributos.Importe?number?string[",##0.00"]}</td>
+                                                        <td align="left" colspan="4"
+                                                            style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${ret_imp.atributos.Importe?number?string[",##0.00"]}</td>
                                                     </tr>
                                                 </#list>
-
                                             <#else>
-                                                <#assign tasaocuota = Conceptos.Impuestos.Retenciones.Retencion.TasaOCuota?number * 100>
-                                                <#assign tipoimpuesto = "">
-                                                <#if Conceptos.Impuestos.Retenciones.Retencion.atributos.Impuesto=="002">
-                                                    <#assign tipoimpuesto = "IVA">
-                                                <#elseif Conceptos.Impuestos.Retenciones.Retencion.Impuesto=="003">
-                                                    <#assign tipoimpuesto = "IEPS">
-                                                </#if>
                                                 <tr>
                                                     <td align="left" colspan="4"
                                                         style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Base?number?string[",##0.00"]}</td>
@@ -772,26 +991,41 @@
                                     </table>
                                 </td>
                             </tr>
-                            <#if Conceptos.InformacionAduanera.NumeroPedimento?has_content>
+                            <#if dataXML.Conceptos.Concepto.InformacionAduanera.NumeroPedimento?has_content>
                                 <tr style="padding:0px 0px;">
-                                    <td colspan="6" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">
-                                        <b>Pedimento:</b></td>
+                                    <td colspan="6" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;"><b>Pedimento:</b>
+                                    </td>
                                     <td colspan="13"
-                                        style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${Conceptos.InformacionAduanera.NumeroPedimento}</td>
+                                        style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${dataXML.Conceptos.Concepto.InformacionAduanera.NumeroPedimento}</td>
+                                </tr>
+                            </#if>
+                            <#if record.entity.custentity_mx_sat_industry_type?has_content && dataXML.Conceptos.Concepto.atributos.ObjetoImp?has_content>
+                                <#if dataXML.Conceptos.Concepto.atributos.ObjetoImp?number == 1>
+                                    <#assign objImpDesc = "NO OBJETO DE IMPUESTO.">
+                                <#elseif dataXML.Conceptos.Concepto.atributos.ObjetoImp?number == 2>
+                                    <#assign objImpDesc = "SÍ OBJETO DE IMPUESTO.">
+                                <#elseif dataXML.Conceptos.Concepto.atributos.ObjetoImp?number == 3>
+                                    <#assign objImpDesc = "SÍ OBJETO DE IMPUESTO Y NO OBLIGATORIO AL DESGLOSE.">
+                                </#if>
+                                <tr style="padding:0px 0px;">
+                                    <td colspan="6"
+                                        style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;"><b>Objeto de impuesto:</b>
+                                    </td>
+                                    <td colspan="13" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${dataXML.Conceptos.Concepto.atributos.ObjetoImp} - ${objImpDesc}</td>
                                 </tr>
                             </#if>
                         </table>
                     </td>
 
-                    <td colspan="3"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.ClaveUnidad}<br></br> ${arrayItems[lineacon].units}</td>
-                    <td colspan="5"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 6pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.NoIdentificacion}</td>
-                    <td align="center" colspan="3" line-height="150%"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;">${Conceptos.atributos.Cantidad?number?string["0"]}</td>
-                    <#assign total_piezas += Conceptos.atributos.Cantidad?number>
+                    <td align="center" colspan="2"
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.ClaveUnidad}<br></br> ${arrayItems[0].units}</td>
+                    <td align="center" colspan="5"
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.NoIdentificacion}</td>
+                    <td align="center" colspan="4" line-height="150%"
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.Cantidad?number?string["0"]}</td>
+                    <#assign total_piezas += dataXML.Conceptos.Concepto.atributos.Cantidad?number>
                     <td align="center" colspan="4"
-                        style="border-left: 1px; border-color: #e3e3e3; font-size:7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.ValorUnitario?number?string[",##0.00"]}</td>
+                        style="border-left: 1px; border-color: #e3e3e3; font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.ValorUnitario?number?string[",##0.00"]}</td>
                     <#assign impuestos_line_calc = 0>
                     <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
                         <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
@@ -812,212 +1046,14 @@
                         </#if>
                     </#if>
                     <td align="center" colspan="4"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt;padding-top:2px;padding-right:0px; padding-left:0px">${impuestos_line_calc?string[",##0.00"]}</td>
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt;padding-top:1px;padding-right:0px; padding-left:0px">${impuestos_line_calc?string[",##0.00"]}</td>
                     <td align="center" colspan="4"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.Descuento?number?string[",##0.00"]}</td>
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px;padding-right:0px; padding-left:0px">${dataXML.Conceptos.Concepto.atributos.Descuento?number?string[",##0.00"]}</td>
                     <td align="right" colspan="6"
-                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:2px;padding-right:0px; padding-left:0px">${Conceptos.atributos.Importe?number?string[",##0.00"]}</td>
+                        style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px;">${dataXML.Conceptos.Concepto.atributos.Importe?number?string[",##0.00"]}</td>
                 </tr>
-                <#assign lineacon = lineacon+1>
-            </#list>
-        <#else>
-            <thead>
-            <tr style="margin-top: 0px; padding-top: 0px; padding-bottom: 0px">
-                <th align="center" colspan="2" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
-                    Partida
-                </th>
-                <th align="center" colspan="5" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">Código<br/>Clave
-                </th>
-                <th align="center" colspan="18" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
-                    <table style="width: 100%; margin-top: 0px; margin-bottom: 0px; border: 1px; border-color: #e3e3e3">
-                        <tr>
-                            <th align="center" colspan="18"
-                                style="font-size: 5pt; padding-top: 0px; padding-bottom: 2px; padding-left: 0px; padding-right: 0px;">
-                                Descripción
-                            </th>
-                        </tr>
-                        <tr>
-                            <td colspan="18" style="border-left: 1px; border-color: #e3e3e3;">
-                                <table style="width: 100%; margin-top: 0px; margin-bottom: 0px;">
-                                    <tr>
-                                        <td align="left" colspan="4"
-                                            style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Base:
-                                        </td>
-                                        <td align="left" colspan="3"
-                                            style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Factor:
-                                        </td>
-                                        <td align="left" colspan="3"
-                                            style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Tasa:
-                                        </td>
-                                        <td align="left" colspan="4"
-                                            style="font-size: 4pt; padding-top: 0px; padding-bottom: 0px;">Importe:
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </th>
-
-                <th align="center" colspan="2" style="font-size: 4pt; padding-left: 0px; padding-right: 0px;">
-                    Unidad
-                </th>
-                <th align="center" colspan="5" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">UPC
-                </th>
-                <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
-                    Cantidad
-                </th>
-                <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">Precio
-                    sin<br/>impuesto
-                </th>
-                <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
-                    Impuesto
-                </th>
-                <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
-                    Descuento
-                </th>
-                <th align="center" colspan="4" style="font-size: 5pt; padding-left: 0px; padding-right: 0px;">
-                    Importe
-                </th>
-            </tr>
-            </thead>
-
-            <tr>
-                <td align="center" colspan="2" line-height="150%"
-                    style="border-left: 0px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px;">1
-                </td>
-                <td align="center" colspan="5" line-height="150%"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding:0;">${arrayItems[0].item?keep_before(" ")}
-                    <br></br>${dataXML.Conceptos.Concepto.atributos.ClaveProdServ}</td>
-
-                <td colspan="18" style="margin: 0; padding: 0;">
-                    <table style="width: 100%">
-                        <tr>
-                            <td colspan="18"
-                                style="border-left: 1px; border-color: #e3e3e3; font-size: 6pt; padding-right: 1px; padding-left: 1px; padding-top: 1px; padding-bottom: 0px;"><#outputformat "XML">${dataXML.Conceptos.Concepto.atributos.Descripcion}</#outputformat></td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="18" style="border-left: 1px; border-color: #e3e3e3;">
-                                <table style="width: 100%; margin-top: 0px; margin-bottom: 0px;">
-                                    <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
-                                        <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
-                                            <#list Conceptos.Impuestos.Traslados.Traslado as traslado_imp>
-                                                <tr>
-                                                    <td align="left" colspan="4"
-                                                        style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${traslado_imp.atributos.Base?number?string[",##0.00"]}</td>
-                                                    <td align="left" colspan="2"
-                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${traslado_imp.atributos.Impuesto}</td>
-                                                    <#assign tasa_line = traslado_imp.atributos.TasaOCuota?number * 100>
-                                                    <td align="left" colspan="4"
-                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
-                                                        %
-                                                    </td>
-                                                    <td align="left" colspan="4"
-                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${traslado_imp.atributos.Importe?number?string[",##0.00"]}</td>
-                                                </tr>
-                                            </#list>
-                                        <#else>
-                                            <tr>
-                                                <td align="left" colspan="4"
-                                                    style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Base?number?string[",##0.00"]}</td>
-                                                <td align="left" colspan="2"
-                                                    style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Impuesto}</td>
-                                                <#assign tasa_line = Conceptos.Impuestos.Traslados.Traslado.atributos.TasaOCuota?number * 100>
-                                                <td align="left" colspan="4"
-                                                    style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
-                                                    %
-                                                </td>
-                                                <td align="left" colspan="4"
-                                                    style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Traslados.Traslado.atributos.Importe?number?string[",##0.00"]}</td>
-                                            </tr>
-                                        </#if>
-                                    </#if>
-
-                                    <#if Conceptos.Impuestos.Retenciones.Retencion?has_content>
-                                        <#if Conceptos.Impuestos.Retenciones.Retencion?is_sequence>
-                                            <#list Conceptos.Impuestos.Retenciones.Retencion as ret_imp>
-                                                <tr>
-                                                    <td align="left" colspan="4"
-                                                        style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${ret_imp.atributos.Base?number?string[",##0.00"]}</td>
-                                                    <td align="left" colspan="2"
-                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${ret_imp.atributos.Impuesto}</td>
-                                                    <#assign tasa_line = ret_imp.atributos.TasaOCuota?number * 100>
-                                                    <td align="left" colspan="4"
-                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
-                                                        %
-                                                    </td>
-                                                    <td align="left" colspan="4"
-                                                        style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${ret_imp.atributos.Importe?number?string[",##0.00"]}</td>
-                                                </tr>
-                                            </#list>
-                                        <#else>
-                                            <tr>
-                                                <td align="left" colspan="4"
-                                                    style="font-size: 5pt; padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Base?number?string[",##0.00"]}</td>
-                                                <td align="left" colspan="2"
-                                                    style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Impuesto}</td>
-                                                <#assign tasa_line = Conceptos.Impuestos.Retenciones.Retencion.atributos.TasaOCuota?number * 100>
-                                                <td align="left" colspan="4"
-                                                    style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${tasa_line?string[",##0.00"]}
-                                                    %
-                                                </td>
-                                                <td align="left" colspan="4"
-                                                    style="font-size: 5pt;padding-top: 0px; padding-bottom: 0px;">${Conceptos.Impuestos.Retenciones.Retencion.atributos.Importe?number?string[",##0.00"]}</td>
-                                            </tr>
-                                        </#if>
-                                    </#if>
-                                </table>
-                            </td>
-                        </tr>
-                        <#if dataXML.Conceptos.Concepto.InformacionAduanera.NumeroPedimento?has_content>
-                            <tr style="padding:0px 0px;">
-                                <td colspan="6" style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;"><b>Pedimento:</b>
-                                </td>
-                                <td colspan="13"
-                                    style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${dataXML.Conceptos.Concepto.InformacionAduanera.NumeroPedimento}</td>
-                            </tr>
-                        </#if>
-                    </table>
-                </td>
-
-                <td align="center" colspan="2"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.ClaveUnidad}<br></br> ${arrayItems[0].units}</td>
-                <td align="center" colspan="5"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.NoIdentificacion}</td>
-                <td align="center" colspan="4" line-height="150%"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.Cantidad?number?string["0"]}</td>
-                <#assign total_piezas += dataXML.Conceptos.Concepto.atributos.Cantidad?number>
-                <td align="center" colspan="4"
-                    style="border-left: 1px; border-color: #e3e3e3; font-size: 5pt; padding-top: 1px; padding-left: 0px; padding-right: 0px;">${dataXML.Conceptos.Concepto.atributos.ValorUnitario?number?string[",##0.00"]}</td>
-                <#assign impuestos_line_calc = 0>
-                <#if Conceptos.Impuestos.Traslados.Traslado?has_content>
-                    <#if Conceptos.Impuestos.Traslados.Traslado?is_sequence>
-                        <#list Conceptos.Impuestos.Traslados.Traslado as impuestos_linec>
-                            <#assign impuestos_line_calc = impuestos_line_calc + impuestos_linec.atributos.Importe?number>
-                        </#list>
-                    <#else>
-                        <#assign impuestos_line_calc = impuestos_line_calc + Conceptos.Impuestos.Traslados.Traslado.atributos.Importe?number>
-                    </#if>
-                </#if>
-                <#if Conceptos.Impuestos.Retenciones.Retencion?has_content>
-                    <#if Conceptos.Impuestos.Retenciones.Retencion?is_sequence>
-                        <#list Conceptos.Impuestos.Retenciones.Retencion as impuestos_linec>
-                            <#assign impuestos_line_calc = impuestos_line_calc - impuestos_linec.atributos.Importe?number>
-                        </#list>
-                    <#else>
-                        <#assign impuestos_line_calc = impuestos_line_calc - Conceptos.Impuestos.Retenciones.Retencion.atributos.Importe?number>
-                    </#if>
-                </#if>
-                <td align="center" colspan="4"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt;padding-top:1px;padding-right:0px; padding-left:0px">${impuestos_line_calc?string[",##0.00"]}</td>
-                <td align="center" colspan="4"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px;padding-right:0px; padding-left:0px">${dataXML.Conceptos.Concepto.atributos.Descuento?number?string[",##0.00"]}</td>
-                <td align="right" colspan="6"
-                    style="border-left: 1px; border-color: #e3e3e3;font-size: 7pt; padding-top:1px;">${dataXML.Conceptos.Concepto.atributos.Importe?number?string[",##0.00"]}</td>
-            </tr>
-        </#if>
-    </table>
+            </#if>
+        </table>
 
     <#else>
 
@@ -1286,6 +1322,22 @@
                                             </td>
                                             <td colspan="13"
                                                 style="font-size: 7pt; padding-top: 1px;  padding-bottom: 1px;">${item.custcol_mx_txn_line_sat_cust_req_num}</td>
+                                        </tr>
+                                    </#if>
+                                    <#if record.entity.custentity_mx_sat_industry_type?has_content && dataXML.Conceptos.Concepto.atributos.ObjetoImp?has_content>
+                                        <#if dataXML.Conceptos.Concepto.atributos.ObjetoImp?number == 1>
+                                            <#assign objImpDesc = "NO OBJETO DE IMPUESTO.">
+                                        <#elseif dataXML.Conceptos.Concepto.atributos.ObjetoImp?number == 2>
+                                            <#assign objImpDesc = "SÍ OBJETO DE IMPUESTO.">
+                                        <#elseif dataXML.Conceptos.Concepto.atributos.ObjetoImp?number == 3>
+                                            <#assign objImpDesc = "SÍ OBJETO DE IMPUESTO Y NO OBLIGATORIO AL DESGLOSE.">
+                                        </#if>
+                                        <tr style="padding:0px 0px;">
+                                            <td colspan="6"
+                                                style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;"><b>Objeto de impuesto:</b>
+                                            </td>
+                                            <td colspan="13"
+                                                style="font-size: 4pt; padding-top: 1px;  padding-bottom: 1px;">${dataXML.Conceptos.Concepto.atributos.ObjetoImp} - ${ObjetoImp}</td>
                                         </tr>
                                     </#if>
                                 </table>
@@ -1742,6 +1794,12 @@
                                     style="font-size: 7pt; padding: 2px;">${record.subsidiary.custrecord_mx_sat_industry_type?upper_case}</td>
                             </#if>
                         </tr>
+                        <#if record.entity.custbody_mx_cfdi_sat_export_type?has_content>
+                            <tr>
+                                <td colspan="1" style="font-size: 7pt;"><b>Tipo de Exportación:</b></td>
+                                <td colspan="1" style="font-size: 7pt;">${record.custbody_mx_cfdi_sat_export_type}</td>
+                            </tr>
+                        </#if>
 
                     </table>
                 </td>
@@ -1760,17 +1818,17 @@
                                 <#else>
                                     <#assign iepsdataxmlseqSubtotal = 0>
                                     <#if dataXML.Impuestos.Traslados.Traslado?is_sequence>
-                                        
+
                                         <#list dataXML.Impuestos.Traslados.Traslado as traslados_lista>
                                             <#if traslados_lista.atributos.Impuesto == "003">
                                                 <#assign iepsdataxmlseqSubtotal = iepsdataxmlseqSubtotal + traslados_lista.atributos.Importe?number>
                                             </#if>
                                         </#list>
-                                        
+
                                     <#else>
                                         <#if dataXML.Impuestos.Traslados.Traslado.atributos.Impuesto == "003">
                                             <#assign iepsdataxmlseqSubtotal = dataXML.Impuestos.Traslados.Traslado.atributos.Importe?number>
-                                      
+
                                         </#if>
                                     </#if>
 
@@ -1935,7 +1993,7 @@
                                 <#if dataXML.Impuestos.Traslados.Traslado?is_sequence>
                                 <#assign ivadataxmlseq = 0>
                                     <#list dataXML.Impuestos.Traslados.Traslado as traslados_lista>
-                                        
+
                                         <#if traslados_lista.atributos.Impuesto=="002">
                                             <#assign ivadataxmlseq = ivadataxmlseq + traslados_lista.atributos.Importe?number>
                                         </#if>
@@ -2024,6 +2082,36 @@
                 - En caso de recibir nuestro producto por medio de paquetería la solicitud de devolución deberá
                 realizarse dentro de las primeras 48 horas siguientes a la recepción, especificando la razón de esta,
                 motivo y su evidencia fotográfica.
+            </td>
+        </tr>
+    </table>
+
+    <table style=" margin-top: 5px; border: 1px; border-color: #e3e3e3;" width="100%">
+        <tr>
+            <td colspan="9" class="cabecera"><b>Información Global</b></td>
+        </tr>
+        <tr>
+            <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                Periodicidad
+            </td>
+            <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                ${record.custbody_efx_fe_periodicidad}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                Meses
+            </td>
+            <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                ${record.custbody_efx_fe_meses}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                Año
+            </td>
+            <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                ${record.custbody_efx_fe_anio?string}
             </td>
         </tr>
     </table>

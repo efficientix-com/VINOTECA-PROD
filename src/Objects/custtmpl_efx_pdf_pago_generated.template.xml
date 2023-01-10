@@ -1,7 +1,11 @@
 <?xml version="1.0"?><!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
 
 <pdf>
+    <#assign "dataXML" = "">
     <#if custom?has_content>
+        <#if custom.dataXML?has_content>
+            <#assign "dataXML" = custom.dataXML>
+        </#if>
         <#setting locale=custom.locale>
         <#assign labels = custom.labels>
         <#if custom.certData?has_content>
@@ -127,6 +131,9 @@
             <#else>
                 font-family: NotoSans, sans-serif;
             </#if>
+            }
+            #impRel{
+                padding: 0px 0px 0px 0px;
             }
             table {
                 font-size: 9pt;
@@ -265,14 +272,6 @@
         </style>
     </head>
     <body header="nlheader" header-height="8%" footer="nlfooter" footer-height="20pt" padding="0.2in 0.5in 0.25in 0.5in" size="Letter">
-    <!--<table class="header" style="width: 100%;"><tr>
-<td rowspan="3">
-    <img src="${subsidiary.logo@url}" style="float: left; margin: 7px; width: 175;height: 50"/>
-     <br />
-</td>
-<td align="right" colspan="2"><span class="title">Pago #${record.tranid}</span></td>
-</tr>
-</table>-->
 
 
     <table style="width:100%;">
@@ -282,117 +281,112 @@
                     <tr>
                         <th>Emisor</th>
                     </tr>
-                    <#if customCompanyInfo?has_content>
-                    <#assign rfc = record.custbody_efx_fe_dirsubs?keep_after_last(" ")?replace("/>", "")>
                     <tr>
-                        <td font-size="8pt"><b >Razón social:</b>${customCompanyInfo.legalname} </td>
+                        <td font-size="8pt"><b >Razón social:</b> ${record.subsidiary.legalname}</td>
+                    </tr>
+                    <#assign rfc = record.custbody_efx_fe_dirsubs?keep_after_last("<br />")>
+                    <tr>
+                        <td font-size="8pt"><b >RFC:</b> ${rfc}</td>
                     </tr>
                     <tr>
-                        <td font-size="8pt"><b >RFC:</b>${rfc}</td>
-                    </tr>
-                    <tr>
-                        <td font-size="8pt"><b >Domicilio fiscal:</b> ${record.custbody_efx_fe_dirsubs?replace(customCompanyInfo.legalname, "")?replace(rfc, "")}
-                        </td>
+                        <#if record.custbody_efx_fe_info_location_pdf == true>
+                            <td font-size="8pt"><b >Domicilio fiscal:</b>
+                                ${record.custbody_efx_fe_dirloc}
+                            </td>
+                        <#else>
+                            <td font-size="8pt"><b >Domicilio fiscal:</b>
+                                ${record.custbody_efx_fe_dirsubs}
+                            </td>
+                        </#if>
                     </tr>
                 </table>
-                <#else>
-        <tr>
-            <td font-size="8pt"><b >Razón social:</b> ${subsidiary.legalname}</td>
-        </tr>
-        <tr>
-            <td font-size="8pt"><b >RFC:</b> ${subsidiary.federalidnumber}</td>
-        </tr>
-        <tr>
-            <td font-size="8pt"><b >Domicilio fiscal:</b>
-                ${subsidiary.mainaddress_text?replace(subsidiary.legalname, "")}
+            </td>
+            <td colspan= "1">
+                <table style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Receptor</th>
+                        </tr>
+                    </thead>
+                    <tr>
+
+                        <#if record.custbody_efx_fe_chbx_factorage==true>
+
+                            <td><b>Razón social:</b> ${record.custbody_efx_fe_factoraje_receptor}</td>
+                        <#else>
+                            <td><b>Razón social:</b> ${record.customer.altname}</td>
+                        </#if>
+                    </tr>
+                    <tr>
+                        <td><b>RFC:</b> ${record.customer.custentity_mx_rfc}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Uso CFDI:</b> P01 - Por Definir</td>
+                    </tr>
+                    <tr>
+                        <td><b>Domicilio fiscal:</b> ${record.customer.address?upper_case}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Régimen Fiscal:</b> ${record.customer.custentity_mx_sat_industry_type?upper_case}</td>
+                    </tr>
+                </table>
+            </td>
+            <td colspan= "1">
+                <table>
+                    <thead>
+                    <tr>
+                        <th align="left" scope="col">Datos fiscales</th>
+                        <th align="left" scope="col"><b>Recibo de pago</b></th>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td font-size="8pt"><b>Serie</b></td>
+                        <td font-size="8pt">${record.tranid?keep_before("-")}</td>
+                    </tr><tr>
+                        <td font-size="8pt"><b>Folio</b></td>
+                        <td font-size="8pt">${record.tranid?keep_after("-")}</td>
+                    </tr><tr>
+                        <td font-size="8pt"><b>Tipo Comprobante</b></td>
+                        <td font-size="8pt">P Pago</td>
+                    </tr><tr>
+                        <td font-size="8pt"><b>Versión Comprobante</b></td>
+                        <td font-size="8pt">${record.customer.custentity_efx_fe_version?keep_after(" ")}</td>
+                    </tr><tr>
+                        <td font-size="8pt"><b>Moneda</b></td>
+                        <td font-size="8pt">XXX</td>
+                    </tr><tr>
+                        <td font-size="8pt"><b>No. Certificado CFDI</b></td>
+                        <#if certData?has_content>
+                            <td font-size="8pt">${certData.custbody_mx_cfdi_issuer_serial}</td>
+                        <#else>
+                            <td font-size="8pt">${record.custbody_mx_cfdi_issuer_serial}</td>
+                        </#if>
+
+                    </tr><tr>
+                        <#assign datearray = record.custbody_mx_cfdi_certify_timestamp?split("T")>
+                        <td font-size="8pt"><b>F. Certificación</b></td>
+                        <td font-size="8pt">
+                            <#if record.custbody_mx_cfdi_certify_timestamp?has_content>
+                                <#if datearray?size == 2 >
+                                    <#assign dayarray = datearray[0]?split("-")>
+                                    ${dayarray[2]}/${dayarray[1]}/${dayarray[0]} ${datearray[1]}
+                                <#else>
+                                    ${record.custbody_mx_cfdi_certify_timestamp}
+                                </#if>
+                            <#else>
+                                <#if certData?has_content>
+                                    ${certData.custbody_mx_cfdi_certify_timestamp}
+                                </#if>
+                            </#if>
+                        </td>
+                    </tr><tr>
+                        <td font-size="8pt"><b>Lugar Expedición</b></td>
+                        <td font-size="8pt">${record.location.custrecord_efx_lugar_expedicion}</td>
+                    </tr>
+
+                </table>
             </td>
         </tr>
-    </table>
-    </#if>
-    </td>
-    <td colspan= "1">
-        <table style="width:100%;">
-            <thead>
-            <tr>
-                <th>Receptor</th>
-            </tr>
-            </thead>
-            <tr>
-
-                <#if record.custbody_efx_fe_chbx_factorage==true>
-
-                    <td><b>Razón social:</b> ${record.custbody_efx_fe_factoraje_receptor}</td>
-                <#else>
-                    <td><b>Razón social:</b> ${record.customer.altName}</td>
-                </#if>
-            </tr>
-            <tr>
-                <td><b>RFC:</b> ${record.customer.custentity_mx_rfc}</td>
-            </tr>
-            <tr>
-                <td><b>Uso CFDI:</b> P01 - Por Definir</td>
-            </tr>
-            <tr>
-                <td><b>Domicilio fiscal:</b> ${record.customer.address?upper_case}</td>
-            </tr>
-        </table>
-    </td>
-    <td colspan= "1">
-        <table>
-            <thead>
-            <tr>
-                <th align="left" scope="col">Datos fiscales</th>
-                <th align="left" scope="col"><b>Recibo de pago</b></th>
-            </tr>
-            </thead>
-            <tr>
-                <td font-size="8pt"><b>Serie</b></td>
-                <td font-size="8pt">${record.tranid?keep_before("-")}</td>
-            </tr><tr>
-                <td font-size="8pt"><b>Folio</b></td>
-                <td font-size="8pt">${record.tranid?keep_after("-")}</td>
-            </tr><tr>
-                <td font-size="8pt"><b>Tipo Comprobante</b></td>
-                <td font-size="8pt">P Pago</td>
-            </tr><tr>
-                <td font-size="8pt"><b>Versión Comprobante</b></td>
-                <td font-size="8pt">3.3</td>
-            </tr><tr>
-                <td font-size="8pt"><b>Moneda</b></td>
-                <td font-size="8pt">XXX</td>
-            </tr><tr>
-                <td font-size="8pt"><b>No. Certificado CFDI</b></td>
-                <#if certData?has_content>
-                    <td font-size="8pt">${certData.custbody_mx_cfdi_issuer_serial}</td>
-                <#else>
-                    <td font-size="8pt">${record.custbody_mx_cfdi_issuer_serial}</td>
-                </#if>
-
-            </tr><tr>
-                <#assign datearray = record.custbody_mx_cfdi_certify_timestamp?split("T")>
-                <td font-size="8pt"><b>F. Certificación</b></td>
-                <td font-size="8pt">
-                    <#if record.custbody_mx_cfdi_certify_timestamp?has_content>
-                        <#if datearray?size == 2 >
-                            <#assign dayarray = datearray[0]?split("-")>
-                            ${dayarray[2]}/${dayarray[1]}/${dayarray[0]} ${datearray[1]}
-                        <#else>
-                            ${record.custbody_mx_cfdi_certify_timestamp}
-                        </#if>
-                    <#else>
-                        <#if certData?has_content>
-                            ${certData.custbody_mx_cfdi_certify_timestamp}
-                        </#if>
-                    </#if>
-                </td>
-            </tr><tr>
-                <td font-size="8pt"><b>Lugar Expedición</b></td>
-                <td font-size="8pt">${record.location.custrecord_efx_lugar_expedicion}</td>
-            </tr>
-
-        </table>
-    </td>
-    </tr>
     </table>
 
 
@@ -404,7 +398,7 @@
         </tr>
         <tr>
           <#assign forma_pago = record.custbody_efx_regimen_subisidiaria?keep_before(" ")>
-            
+
              <#if forma_pago == "601">
                     <td>601 - General de Ley Personas Morales</td>
                     <#elseif forma_pago == "603">
@@ -458,14 +452,14 @@
     <#if xml_datapay?has_content>
         <#assign xml_data_payment = xml_datapay?eval>
     </#if>
-    
+
       <#assign "paymenttotal" = 0/>
       <#list custom.appliedTxns as appliedTxn>
 
           <#assign "txnitem" = record.apply[appliedTxn.line?number]/>
           <#assign "paymenttotal" += txnitem.amount/>
         </#list>
-    
+
     <table class="itemtable" style="width: 100%; margin-top: 10px;">
 
         <tr>
@@ -503,13 +497,11 @@
         </tr>
         </thead>
         <tr>
-            <td align="left" colspan="5" line-height="150%">Versión: 1.0</td>
+            <td align="left" colspan="5" line-height="150%">Versión: ${record.customer.custentity_efx_fe_version?keep_after(" ")}</td>
         </tr>
         <tr>
             <td align="left" colspan="4" ><b>Fecha de pago: </b></td>
             <td align="left" colspan="4" >${record.trandate}</td>
-            <td align="left" colspan="4" ><b>RFC Emisor cuenta ordenante: </b></td>
-            <td align="left" colspan="4" >${subsidiary.federalidnumber}</td>
         </tr>
         <tr>
             <td align="left" colspan="4" ><b>Forma de pago: </b></td>
@@ -573,127 +565,265 @@
             <#else>
                 <td align="left" colspan="4" ></td>
             </#if>
-            <td align="left" colspan="4" ><b>Nombre del banco ordenante: </b></td>
-            <td align="left" colspan="4" >${record.custbody_mx_cfdi_issue_bank_name}</td>
         </tr>
         <tr>
             <td align="left" colspan="4" ><b>Moneda de pago: </b></td>
             <td align="left" colspan="4" >${record.currency}</td>
-            <td align="left" colspan="4" ><b>Cuenta ordenante: </b></td>
-            <td align="left" colspan="4" >${record.custbody_mx_cfdi_payer_account}</td>
-        </tr>
-        <tr>
-            <td align="left" colspan="4" ><b>Tipo de cambio: </b></td>
-            <td align="left" colspan="4" ><!--${record.exchangerate}--></td>
-            <td align="left" colspan="4" ><b>RFC Emisor cuenta beneficiario: </b></td>
-            <td align="left" colspan="4" >${record.custbody_mx_cfdi_recipient_entity_rfc}</td>
         </tr>
         <tr>
             <td align="left" colspan="4" ><b>Monto: </b></td>
             <td align="left" colspan="4" >${nsformat_rate(paymenttotal)}</td>
-            <td align="left" colspan="4" ><b>Cuenta del beneficiario: </b></td>
-            <td align="left" colspan="4" >${record.custbody_mx_cfdi_recipient_account}</td>
         </tr>
         <tr>
             <td align="left" colspan="4" ><b>Número de operación: </b></td>
             <td align="left" colspan="4" >${record.internalid}</td>
-            <td align="left" colspan="4" ><b>Certificado de pago: </b></td>
-            <td align="left" colspan="4" >${record.custbody_mx_cfdi_payment_certificate}</td>
         </tr>
         <tr>
-            <td align="left" colspan="4" ><b>Fecha de tipo de cambio: </b></td>
-            <td align="left" colspan="4" ><!--${record.trandate}--></td>
-            <td align="left" colspan="4" ><b>Tipo de cadena de pago: </b></td>
-            <td align="left" colspan="4" >${record.custbody_mx_cfdi_payment_string_type}</td>
+            <td align="left" colspan="4" ><b>Tipo de exportación: </b></td>
+            <td align="left" colspan="4" >${record.custbody_mx_cfdi_sat_export_type}</td>
         </tr>
 
     </table>
 
-    <#if custom?has_content>
-
-        <#if custom.appliedTxns?has_content>
-            <#list custom.appliedTxns as key, value>
-                Key: ${key}  Value: ${value}<br/>
-            </#list>
-            <#assign documentTotal = 0>
-            <#assign amountTotal = 0>
-            <table class="itemtable" style="width: 100%; margin-top: 10px; margin-left: 10px; margin-right: 10px;"><!-- start items -->
-                <#assign conteoPagos = 0>
-                <#list custom.appliedTxns as appliedTxn>
-                    <#assign "txnitem" = record.apply[appliedTxn.line?number]>
-                    <#assign "nlineas" = appliedTxn.line?number>
-
-                    <#assign "invPaymentTerm" = satCodes.paymentTermInvMap["d"+appliedTxn.id]>
-                    <#if record.custbody_efx_fe_parcialidad?has_content>
-                        <#assign "parcialidad_f_eval" = record.custbody_efx_fe_parcialidad?eval>
-                    </#if>
-                    <#list parcialidad_f_eval as parcialidad_f>
-                        <#if txnitem.refnum == parcialidad_f.facturaRef>
+    <#if dataXML?has_content>
+        <#if dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR?is_sequence>
+            <#list dataXML.Complemento.Pagos.Pago.DoctoRelacionado as docDR>
+                <table class="itemtable" style="width: 100%; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
                     <tr style="margin-bottom:6px">
                         <td align="left" colspan="5" style="border-bottom:2px"><b>Documento Relacionado</b></td>
-
                     </tr>
                     <tr style="margin-top:6px">
                         <td align="left" colspan="1">ID del Documento:</td>
-                        <td align="left" colspan="2">${appliedTxn.custbody_mx_cfdi_uuid}</td>
+                        <td align="left" colspan="2">${docDR.atributos.IdDocumento}</td>
                         <td align="left" colspan="1">Parcialidad:</td>
-                        <td align="right" colspan="1">
-                            <#if record.custbody_efx_fe_parcialidad?has_content>
-                                ${parcialidad_f.parcialidad}
-                            </#if>
-                        </td>
-
+                        <td align="right" colspan="1">${docDR.atributos.NumParcialidad}</td>
                     </tr>
+
                     <tr>
                         <td align="left" colspan="1">Serie/Folio:</td>
-                        <td align="left" colspan="2">${parcialidad_f.facturaRef}</td>
+                        <td align="left" colspan="2">${docDR.atributos.Serie}${docDR.atributos.Folio}</td>
                         <td align="left" colspan="1">Importe del Saldo Anterior:</td>
-
-                        <#if record.custbody_efx_fe_chbx_factorage == true>
-                            <#assign prevAmount = parcialidad_f.imp + txnitem.disc>
-                        <#else>
-                            <#assign prevAmount = parcialidad_f.imp>
-                        </#if>
-
-                        <td align="right" colspan="1">${fmtc(prevAmount)}</td>
-
+                        <td align="right" colspan="1">${docDR.atributos.ImpSaldoAnt}</td>
                     </tr>
 
                     <tr>
                         <td align="left" colspan="1" line-height="150%">Moneda:</td>
-                        <td align="left" colspan="2" line-height="150%">${appliedTxn.currencysymbol}</td>
+                        <td align="left" colspan="2" line-height="150%">${docDR.atributos.MonedaDR}</td>
                         <td align="left" colspan="1" line-height="150%">Importe Pagado:</td>
-                        <td align="right" colspan="1" line-height="150%">${fmtc_NS(txnitem.amount)}</td>
-
+                        <td align="right" colspan="1" line-height="150%">${docDR.atributos.ImpPagado}</td>
                     </tr>
 
                     <tr>
                         <td align="left" colspan="1">Tipo de Cambio:</td>
-                        <td align="left" colspan="2">${record.exchangerate}</td>
+                        <td align="left" colspan="2">${docDR.atributos.EquivalenciaDR}</td>
                         <td align="left" colspan="1">Importe de Saldo Insoluto:</td>
-	                      <#assign impinsoluto =  prevAmount- txnitem.amount>
-
-                        <td align="right" colspan="1">${fmtc(impinsoluto)}</td>
+                        <td align="right" colspan="1">${docDR.atributos.ImpSaldoInsoluto}</td>
 
                     </tr>
+                    <#assign "invPaymentTerm" = satCodes.paymentTermInvMap["d"+appliedTxn.id]>
                     <tr>
                         <td align="left" colspan="1">Metodo de Pago:</td>
                         <td align="left" colspan="2">
-                            <#if invPaymentTerm == 'PPD'>PPD - PAGO EN PARCIALIDADES O DIFERIDO</#if>
-                            <#if invPaymentTerm == 'PUE'>PUE - PAGO EN UNA SOLA EXHIBICIÓN</#if>
+                            ${record.custbody_mx_txn_sat_payment_term}
                         </td>
                         <td align="left" colspan="1"></td>
                         <td align="left" colspan="1"></td>
 
-                        <!--<td align="right" colspan="3" line-height="150%">${fmtc_NS(txnitem.total)}</td>
-<td align="right" colspan="3" line-height="150%">${fmtc(appliedTxn.amountdue)}</td>
-<td align="right" colspan="3" line-height="150%">${fmtc_NS(txnitem.amount)}</td>-->
                     </tr>
-                    <#assign conteoPagos = conteoPagos+1>
 
+                    <tr style="border-top:2px;">
+                        <td align="left" colspan="1"></td>
+                    </tr>
+                    <#if dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR?is_sequence>
+                        <#list dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR as tax>
+                            <#--  Tabla de detalle de IVA  -->
+                            <tr>
+                                <td id="impRel" align="left" colspan="1" style="margin-top: 2px;"><b>BaseDR</b></td>
+                                <td id="impRel" align="left" colspan="1">${tax.atributos.BaseDR}</td>
+                                <#--  <td align="left" colspan="1">${dataXML.Complemento.Pagos.Totales.atributos.TotalTrasladosBaseIVA16}</td>  -->
+                            </tr>
+                            <tr>
+                                <td id="impRel" align="left" colspan="1"><b>ImpuestosDR</b></td>
+                                <td id="impRel" align="left" colspan="1">${tax.atributos.TasaOCuotaDR}</td>
+                            </tr>
+                            <tr>
+                                <td id="impRel" align="left" colspan="1"><b>Monto TotalDR</b></td>
+                                <td id="impRel" align="left" colspan="1">${tax.atributos.ImporteDR}</td>
+                            </tr>
+                            <tr style="border-bottom:2px;">
+                                <td align="left" colspan="1"></td>
+                            </tr>
+
+                        </#list>
+                    <#else>
+                        <tr>
+                            <td id="impRel" align="left" colspan="1" style="margin-top: 2px;"><b>BaseDR</b></td>
+                            <td id="impRel" align="left" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR.atributos.BaseDR}</td>
+                        </tr>
+                        <tr>
+                            <td id="impRel" align="left" colspan="1"><b>ImpuestosDR</b></td>
+                            <td id="impRel" align="left" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR.atributos.TasaOCuotaDR}</td>
+                        </tr>
+                        <tr>
+                            <td id="impRel" align="left" colspan="1"><b>Monto TotalDR</b></td>
+                            <td id="impRel" align="left" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR.atributos.ImporteDR}</td>
+                        </tr>
+                        <tr style="border-bottom:2px;">
+                            <td align="left" colspan="1"></td>
+                        </tr>
+                    </#if>
+                    <#if record.custbody_efx_fe_chbx_factorage == true>
+                        <!-- Factoraje -->
+                        <#list custom.appliedTxns as appliedTxn>
+
+                            <#assign "txnitem" = record.apply[appliedTxn.line?number]>
+                            <#assign "nlineas" = appliedTxn.line?number>
+                            <#if record.custbody_efx_fe_parcialidad?has_content>
+                                <#assign "parcialidad_f_eval" = record.custbody_efx_fe_parcialidad?eval>
+                                <#assign "parcialidad_f" = parcialidad_f_eval[nlineas]>
+                            </#if>
+                            <#assign "invPaymentTerm" = satCodes.paymentTermInvMap["d"+appliedTxn.id]>
+                            <tr style="margin-bottom:6px">
+                                <td align="left" colspan="5" style="border-bottom:2px"><b>Documento Relacionado</b></td>
+
+                            </tr>
+                            <tr style="margin-top:6px">
+                                <td align="left" colspan="1">ID del Documento:</td>
+                                <td align="left" colspan="2">${appliedTxn.custbody_mx_cfdi_uuid}</td>
+                                <td align="left" colspan="1">Parcialidad:</td>
+                                <td align="right" colspan="1">
+                                    <#if record.custbody_efx_fe_parcialidad?has_content>
+                                        ${parcialidad_f.parcialidad?number + 1}
+                                    </#if>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td align="left" colspan="1">Serie/Folio:</td>
+                                <td align="left" colspan="2">${parcialidad_f.facturaRef}</td>
+                                <td align="left" colspan="1">Importe del Saldo Anterior:</td>
+
+                                <td align="right" colspan="1">${fmtc(txnitem.disc)}</td>
+
+                            </tr>
+
+                            <tr>
+                                <td align="left" colspan="1" line-height="150%">Moneda:</td>
+                                <td align="left" colspan="2" line-height="150%">${appliedTxn.currencysymbol}</td>
+                                <td align="left" colspan="1" line-height="150%">Importe Pagado:</td>
+                                <td align="right" colspan="1" line-height="150%">${fmtc_NS(txnitem.disc)}</td>
+
+                            </tr>
+
+                            <tr>
+                                <td align="left" colspan="1">Tipo de Cambio:</td>
+                                <td align="left" colspan="2"><!--${record.exchangerate}--></td>
+                                <td align="left" colspan="1">Importe de Saldo Insoluto:</td>
+                                <td align="right" colspan="1">0.00</td>
+
+                            </tr>
+                            <tr>
+                                <td align="left" colspan="1">Metodo de Pago:</td>
+                                <td align="left" colspan="2">
+                                    <#if invPaymentTerm == 'PPD'>PPD - PAGO EN PARCIALIDADES O DIFERIDO</#if>
+                                    <#if invPaymentTerm == 'PUE'>PUE - PAGO EN UNA SOLA EXHIBICIÓN</#if>
+                                </td>
+                                <td align="left" colspan="1"></td>
+                                <td align="left" colspan="1"></td>
+                            </tr>
+                        </#list>
+                    </#if>
+
+                </table>
+            </#list>
+        <#else>
+            <table class="itemtable" style="width: 100%; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+                <tr style="margin-bottom:6px">
+                    <td align="left" colspan="5" style="border-bottom:2px"><b>Documento Relacionado</b></td>
+                </tr>
+                <tr style="margin-top:6px">
+                    <td align="left" colspan="1">ID del Documento:</td>
+                    <td align="left" colspan="2">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.IdDocumento}</td>
+                    <td align="left" colspan="1">Parcialidad:</td>
+                    <td align="right" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.NumParcialidad}</td>
+                </tr>
+
+                <tr>
+                    <td align="left" colspan="1">Serie/Folio:</td>
+                    <#assign serie = dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.Serie>
+                    <#assign folio = dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.Folio>
+                    <td align="left" colspan="2">${serie}${folio}</td>
+                    <td align="left" colspan="1">Importe del Saldo Anterior:</td>
+                    <td align="right" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.ImpSaldoAnt}</td>
+                </tr>
+
+                <tr>
+                    <td align="left" colspan="1" line-height="150%">Moneda:</td>
+                    <td align="left" colspan="2" line-height="150%">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.MonedaDR}</td>
+                    <td align="left" colspan="1" line-height="150%">Importe Pagado:</td>
+                    <td align="right" colspan="1" line-height="150%">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.ImpPagado}</td>
+                </tr>
+
+                <tr>
+                    <td align="left" colspan="1">Tipo de Cambio:</td>
+                    <td align="left" colspan="2">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.EquivalenciaDR}</td>
+                    <td align="left" colspan="1">Importe de Saldo Insoluto:</td>
+                    <td align="right" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.atributos.ImpSaldoInsoluto}</td>
+                </tr>
+
+                <#assign "invPaymentTerm" = satCodes.paymentTermInvMap["d"+appliedTxn.id]>
+                <tr>
+                    <td align="left" colspan="1">Metodo de Pago:</td>
+                    <td align="left" colspan="2">
+                        ${record.custbody_mx_txn_sat_payment_term}
+                    </td>
+                    <td align="left" colspan="1"></td>
+                    <td align="left" colspan="1"></td>
+
+                </tr>
+
+                <tr style="border-top:2px;">
+                    <td align="left" colspan="1"></td>
+                </tr>
+                <#if dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR?is_sequence>
+                    <#list dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR as tax>
+                        <#--  Tabla de detalle de IVA  -->
+                        <tr>
+                            <td align="left" colspan="1"><b>BaseDR</b></td>
+                            <td align="left" colspan="1">${tax.atributos.BaseDR}</td>
+                            <#--  <td align="left" colspan="1">${dataXML.Complemento.Pagos.Totales.atributos.TotalTrasladosBaseIVA16}</td>  -->
+                        </tr>
+                        <tr>
+                            <td align="left" colspan="1"><b>ImpuestosDR</b></td>
+                            <td align="left" colspan="1">${tax.atributos.TasaOCuotaDR}</td>
+                        </tr>
+                        <tr>
+                            <td align="left" colspan="1"><b>Monto TotalDR</b></td>
+                            <td align="left" colspan="1">${tax.atributos.ImporteDR}</td>
+                        </tr>
+                        <tr style="border-bottom:2px;">
+                            <td align="left" colspan="1"></td>
+                        </tr>
+
+                    </#list>
+                <#else>
+                    <tr>
+                        <td align="left" colspan="1"><b>BaseDR</b></td>
+                        <td align="left" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR.atributos.BaseDR}</td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="1"><b>ImpuestosDR</b></td>
+                        <td align="left" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR.atributos.TasaOCuotaDR}</td>
+                    </tr>
+                    <tr>
+                        <td align="left" colspan="1"><b>Monto TotalDR</b></td>
+                        <td align="left" colspan="1">${dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR.atributos.ImporteDR}</td>
+                    </tr>
+                    <tr style="border-bottom:2px;">
+                        <td align="left" colspan="1"></td>
+                    </tr>
                 </#if>
-                </#list>
-                </#list>
+
                 <#if record.custbody_efx_fe_chbx_factorage == true>
                     <!-- Factoraje -->
                     <#list custom.appliedTxns as appliedTxn>
@@ -752,27 +882,192 @@
                             </td>
                             <td align="left" colspan="1"></td>
                             <td align="left" colspan="1"></td>
-
-                            <!--<td align="right" colspan="3" line-height="150%">${fmtc_NS(txnitem.total)}</td>
-<td align="right" colspan="3" line-height="150%">${fmtc(appliedTxn.amountdue)}</td>
-<td align="right" colspan="3" line-height="150%">${fmtc_NS(txnitem.amount)}</td>-->
                         </tr>
                     </#list>
                 </#if>
 
             </table>
-            <table style="width:100%;">
-                <tr style="border-top:2px;">
-                    <td align="right" colspan="10" style="width:80%"><b>Subtotal</b></td>
-                    <td align="right" colspan="3" style="width:20%">0.00</td>
-                </tr>
-                <tr >
-                    <td align="right" colspan="10" style="width:80%"><b>Total</b></td>
-                    <td align="right" colspan="3" style="width:20%">0.00</td>
-                </tr>
-            </table>
+        </#if>
+    <#else>
+        <#if custom?has_content>
+            <#if custom.appliedTxns?has_content>
+                <#list custom.appliedTxns as key, value>
+                    Key: ${key}  Value: ${value}<br/>
+                </#list>
+                <#assign documentTotal = 0>
+                <#assign amountTotal = 0>
+                <table class="itemtable" style="width: 100%; margin-top: 10px; margin-left: 10px; margin-right: 10px;"><!-- start items -->
+                    <#assign conteoPagos = 0>
+                    <#list custom.appliedTxns as appliedTxn>
+                        <#assign "txnitem" = record.apply[appliedTxn.line?number]>
+                        <#assign "nlineas" = appliedTxn.line?number>
+
+                        <#assign "invPaymentTerm" = satCodes.paymentTermInvMap["d"+appliedTxn.id]>
+                        <#if record.custbody_efx_fe_parcialidad?has_content>
+                            <#assign "parcialidad_f_eval" = record.custbody_efx_fe_parcialidad?eval>
+                        </#if>
+                        <#list parcialidad_f_eval as parcialidad_f>
+                            <#if txnitem.refnum == parcialidad_f.facturaRef>
+                                <tr style="margin-bottom:6px">
+                                    <td align="left" colspan="5" style="border-bottom:2px"><b>Documento Relacionado</b></td>
+                                </tr>
+                                <tr style="margin-top:6px">
+                                    <td align="left" colspan="1">ID del Documento:</td>
+                                    <td align="left" colspan="2">${appliedTxn.custbody_mx_cfdi_uuid}</td>
+                                    <td align="left" colspan="1">Parcialidad:</td>
+                                    <td align="right" colspan="1">
+                                        <#if record.custbody_efx_fe_parcialidad?has_content>
+                                            ${parcialidad_f.parcialidad}
+                                        </#if>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td align="left" colspan="1">Serie/Folio:</td>
+                                    <td align="left" colspan="2">${parcialidad_f.facturaRef}</td>
+                                    <td align="left" colspan="1">Importe del Saldo Anterior:</td>
+
+                                    <#if record.custbody_efx_fe_chbx_factorage == true>
+                                        <#assign prevAmount = parcialidad_f.imp + txnitem.disc>
+                                    <#else>
+                                        <#assign prevAmount = parcialidad_f.imp>
+                                    </#if>
+
+                                    <td align="right" colspan="1">${fmtc(prevAmount)}</td>
+
+                                </tr>
+
+                                <tr>
+                                    <td align="left" colspan="1" line-height="150%">Moneda:</td>
+                                    <td align="left" colspan="2" line-height="150%">${appliedTxn.currencysymbol}</td>
+                                    <td align="left" colspan="1" line-height="150%">Importe Pagado:</td>
+                                    <td align="right" colspan="1" line-height="150%">${fmtc_NS(txnitem.amount)}</td>
+
+                                </tr>
+
+                                <tr>
+                                    <td align="left" colspan="1">Tipo de Cambio:</td>
+                                    <td align="left" colspan="2">${record.exchangerate}</td>
+                                    <td align="left" colspan="1">Importe de Saldo Insoluto:</td>
+                                    <#assign impinsoluto =  prevAmount- txnitem.amount>
+
+                                    <td align="right" colspan="1">${fmtc(impinsoluto)}</td>
+
+                                </tr>
+                                <tr>
+                                    <td align="left" colspan="1">Metodo de Pago:</td>
+                                    <td align="left" colspan="2">
+                                        <#if invPaymentTerm == 'PPD'>PPD - PAGO EN PARCIALIDADES O DIFERIDO</#if>
+                                        <#if invPaymentTerm == 'PUE'>PUE - PAGO EN UNA SOLA EXHIBICIÓN</#if>
+                                    </td>
+                                    <td align="left" colspan="1"></td>
+                                    <td align="left" colspan="1"></td>
+
+                                </tr>
+
+                                <#--  Tabla de detalle de IVA  -->
+                                <tr>
+                                    <td align="left" colspan="1">BaseDR</td>
+                                    <td align="left" colspan="1">${dataXML.Complemento.Pagos.Totales.atributos.TotalTrasladosBaseIVA16}</td>
+                                    <td align="left" colspan="1"><b>ImpuestosDR</b></td>
+                                    <td align="left" colspan="1">${dataXML.Complemento.Pagos.Totales.atributos.TotalTrasladosImpuestoIVA16}</td>
+                                    <td align="left" colspan="1"><b>Monto TotalDR</b></td>
+                                    <td align="left" colspan="1">${dataXML.Complemento.Pagos.Totales.atributos.MontoTotalPagos}</td>
+                                </tr>
+
+                                <#--<tr style="vertical-align:baseline">
+                                </tr>  -->
+                                <#assign conteoPagos = conteoPagos+1>
+
+                            </#if>
+                        </#list>
+                    </#list>
+                    <#if record.custbody_efx_fe_chbx_factorage == true>
+                        <!-- Factoraje -->
+                        <#list custom.appliedTxns as appliedTxn>
+
+                            <#assign "txnitem" = record.apply[appliedTxn.line?number]>
+                            <#assign "nlineas" = appliedTxn.line?number>
+                            <#if record.custbody_efx_fe_parcialidad?has_content>
+                                <#assign "parcialidad_f_eval" = record.custbody_efx_fe_parcialidad?eval>
+                                <#assign "parcialidad_f" = parcialidad_f_eval[nlineas]>
+                            </#if>
+                            <#assign "invPaymentTerm" = satCodes.paymentTermInvMap["d"+appliedTxn.id]>
+                            <tr style="margin-bottom:6px">
+                                <td align="left" colspan="5" style="border-bottom:2px"><b>Documento Relacionado</b></td>
+
+                            </tr>
+                            <tr style="margin-top:6px">
+                                <td align="left" colspan="1">ID del Documento:</td>
+                                <td align="left" colspan="2">${appliedTxn.custbody_mx_cfdi_uuid}</td>
+                                <td align="left" colspan="1">Parcialidad:</td>
+                                <td align="right" colspan="1">
+                                    <#if record.custbody_efx_fe_parcialidad?has_content>
+                                        ${parcialidad_f.parcialidad?number + 1}
+                                    </#if>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td align="left" colspan="1">Serie/Folio:</td>
+                                <td align="left" colspan="2">${parcialidad_f.facturaRef}</td>
+                                <td align="left" colspan="1">Importe del Saldo Anterior:</td>
+
+                                <td align="right" colspan="1">${fmtc(txnitem.disc)}</td>
+
+                            </tr>
+
+                            <tr>
+                                <td align="left" colspan="1" line-height="150%">Moneda:</td>
+                                <td align="left" colspan="2" line-height="150%">${appliedTxn.currencysymbol}</td>
+                                <td align="left" colspan="1" line-height="150%">Importe Pagado:</td>
+                                <td align="right" colspan="1" line-height="150%">${fmtc_NS(txnitem.disc)}</td>
+
+                            </tr>
+
+                            <tr>
+                                <td align="left" colspan="1">Tipo de Cambio:</td>
+                                <td align="left" colspan="2"><!--${record.exchangerate}--></td>
+                                <td align="left" colspan="1">Importe de Saldo Insoluto:</td>
+                                <td align="right" colspan="1">0.00</td>
+
+                            </tr>
+                            <tr>
+                                <td align="left" colspan="1">Metodo de Pago:</td>
+                                <td align="left" colspan="2">
+                                    <#if invPaymentTerm == 'PPD'>PPD - PAGO EN PARCIALIDADES O DIFERIDO</#if>
+                                    <#if invPaymentTerm == 'PUE'>PUE - PAGO EN UNA SOLA EXHIBICIÓN</#if>
+                                </td>
+                                <td align="left" colspan="1"></td>
+                                <td align="left" colspan="1"></td>
+                            </tr>
+                        </#list>
+                    </#if>
+
+                </table>
+                <table style="width:100%;">
+                    <tr style="border-top:2px;">
+                        <td align="right" colspan="10" style="width:80%"><b>Subtotal</b></td>
+                        <td align="right" colspan="3" style="width:20%">0.00</td>
+                    </tr>
+                    <tr >
+                        <td align="right" colspan="10" style="width:80%"><b>Total</b></td>
+                        <td align="right" colspan="3" style="width:20%">0.00</td>
+                    </tr>
+                </table>
+            </#if>
         </#if>
     </#if>
+    <table style="width:100%;">
+        <tr>
+            <td align="right" colspan="10" style="width:80%"><b>Subtotal</b></td>
+            <td align="right" colspan="3" style="width:20%">0.00</td>
+        </tr>
+        <tr >
+            <td align="right" colspan="10" style="width:80%"><b>Total</b></td>
+            <td align="right" colspan="3" style="width:20%">0.00</td>
+        </tr>
+    </table>
 
 
 
