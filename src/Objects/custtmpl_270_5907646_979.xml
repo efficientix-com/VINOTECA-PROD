@@ -1,0 +1,9 @@
+<advancedpdftemplate scriptid="custtmpl_270_5907646_979" standard="STDTMPLCUSTCRED">
+  <description></description>
+  <displaysourcecode>T</displaysourcecode>
+  <isinactive>F</isinactive>
+  <preferred>T</preferred>
+  <printtype>TRANSACTION</printtype>
+  <title>VM - Nota de Crédito</title>
+  <trantype>CUSTCRED</trantype>
+</advancedpdftemplate>

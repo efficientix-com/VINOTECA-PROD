@@ -1,0 +1,9 @@
+<advancedpdftemplate scriptid="custtmpl_efx_pdf_pago_generated" standard="STDTMPLCUSTPYMT">
+  <description></description>
+  <displaysourcecode>T</displaysourcecode>
+  <isinactive>F</isinactive>
+  <preferred>T</preferred>
+  <printtype>TRANSACTION</printtype>
+  <title>EFX Pago Generated</title>
+  <trantype>CUSTPYMT</trantype>
+</advancedpdftemplate>

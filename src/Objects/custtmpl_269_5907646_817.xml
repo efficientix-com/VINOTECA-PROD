@@ -1,0 +1,9 @@
+<advancedpdftemplate scriptid="custtmpl_269_5907646_817" standard="STDTMPLCUSTINVC">
+  <description></description>
+  <displaysourcecode>T</displaysourcecode>
+  <isinactive>F</isinactive>
+  <preferred>F</preferred>
+  <printtype>TRANSACTION</printtype>
+  <title>VM - Factura Contado Certificado</title>
+  <trantype>CUSTINVC</trantype>
+</advancedpdftemplate>
