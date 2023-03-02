@@ -2086,35 +2086,37 @@
         </tr>
     </table>
 
-    <table style=" margin-top: 5px; border: 1px; border-color: #e3e3e3;" width="100%">
-        <tr>
-            <td colspan="9" class="cabecera"><b>Información Global</b></td>
-        </tr>
-        <tr>
-            <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
-                Periodicidad
-            </td>
-            <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
-                ${record.custbody_efx_fe_periodicidad}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
-                Meses
-            </td>
-            <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
-                ${record.custbody_efx_fe_meses}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
-                Año
-            </td>
-            <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
-                ${record.custbody_efx_fe_anio?string}
-            </td>
-        </tr>
-    </table>
+    <#if record.custbody_efx_fe_gbl_type?has_content>
+        <table style=" margin-top: 5px; border: 1px; border-color: #e3e3e3;" width="100%">
+            <tr>
+                <td colspan="9" class="cabecera"><b>Información Global</b></td>
+            </tr>
+            <tr>
+                <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                    Periodicidad
+                </td>
+                <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                    ${record.custbody_efx_fe_periodicidad}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                    Meses
+                </td>
+                <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                    ${record.custbody_efx_fe_meses}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                    Año
+                </td>
+                <td colspan="2" style="font-size: 7pt; border-color: #e3e3e3;  padding: 2px;">
+                    ${record.custbody_efx_fe_anio?string}
+                </td>
+            </tr>
+        </table>
+    </#if>
 
     <table style=" margin-top: 5px; border: 1px; border-color: #e3e3e3;" width="100%" height="100%">
         <tr>
