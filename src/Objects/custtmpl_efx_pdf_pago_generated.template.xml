@@ -309,25 +309,90 @@
                         </tr>
                     </thead>
                     <tr>
-
+                    <#if record.customer.custentity_efx_fe_version?keep_after(" ") == "4.0">
                         <#if record.custbody_efx_fe_chbx_factorage==true>
+
+                            <td><b>Razón social:</b> ${record.custbody_efx_fe_factoraje_receptor}</td>
+                        <#else>
+                            <td><b>Razón social:</b> ${record.customer.custentity_mx_sat_registered_name}</td>
+                        </#if>
+                    <#else>
+                    <#if record.custbody_efx_fe_chbx_factorage==true>
 
                             <td><b>Razón social:</b> ${record.custbody_efx_fe_factoraje_receptor}</td>
                         <#else>
                             <td><b>Razón social:</b> ${record.customer.altname}</td>
                         </#if>
+                    </#if>
                     </tr>
                     <tr>
                         <td><b>RFC:</b> ${record.customer.custentity_mx_rfc}</td>
                     </tr>
                     <tr>
-                        <td><b>Uso CFDI:</b> P01 - Por Definir</td>
+                    <#if record.customer.custentity_efx_fe_version?keep_after(" ") == "4.0">
+                        <td><b>Uso CFDI:</b> CP01 - Pagos</td>
+                    <#else>
+                    <td><b>Uso CFDI:</b> P01 - Por Definir</td>
+                    </#if>
                     </tr>
                     <tr>
-                        <td><b>Domicilio fiscal:</b> ${record.customer.address?upper_case}</td>
+                        <td>
+                            <#if record.custbody_fb_dir_cliente?has_content>
+                                <b>Domicilio fiscal:</b> ${record.custbody_fb_dir_cliente?upper_case}
+                            <#else>
+                                <b>Domicilio fiscal:</b> ${record.customer.address?upper_case}
+                            </#if>
+                        </td>
                     </tr>
                     <tr>
-                        <td><b>Régimen Fiscal:</b> ${record.customer.custentity_mx_sat_industry_type?upper_case}</td>
+
+                        <#assign regifig = record.customer.custentity_mx_sat_industry_type?keep_before(" ")>
+
+                    <#if regifig == "601">
+                    <td><b>Régimen Fiscal: </b>601 - General de Ley Personas Morales</td>
+                    <#elseif regifig == "603">
+                    <td><b>Régimen Fiscal: </b>603 - Personas Morales con Fines no Lucrativos</td>
+                    <#elseif regifig == "605">
+                    <td><b>Régimen Fiscal: </b>605 - Sueldos y Salarios e Ingresos Asimilados a Salarios</td>
+                    <#elseif regifig == "606">
+                      <td><b>Régimen Fiscal: </b>606 - Arrendamiento</td>
+                      <#elseif regifig == "607">
+                      <td><b>Régimen Fiscal: </b>607 - Régimen de Enajenación o Adquisición de Bienes</td>
+                     <#elseif regifig == "608">
+                      <td><b>Régimen Fiscal: </b>608 - Demás ingresos</td>
+                    <#elseif regifig == "609">
+                      <td><b>Régimen Fiscal: </b>609 - Consolidación</td>
+                    <#elseif regifig == "610">
+                      <td><b>Régimen Fiscal: </b>610 - Residentes en el Extranjero sin Establecimiento Permanente en México</td>
+                    <#elseif regifig == "611">
+                      <td><b>Régimen Fiscal: </b>611 - Ingresos por Dividendos (socios y accionistas)</td>
+                    <#elseif regifig == "612">
+                      <td><b>Régimen Fiscal: </b>612 - Personas Físicas con Actividades Empresariales y Profesionales</td>
+                    <#elseif regifig == "614">
+                      <td><b>Régimen Fiscal: </b>614 - Ingresos por intereses</td>
+                    <#elseif regifig == "615">
+                      <td><b>Régimen Fiscal: </b>615 - Régimen de los ingresos por obtención de premios</td>
+                    <#elseif regifig == "616">
+                      <td><b>Régimen Fiscal: </b>616 - Sin obligaciones fiscales</td>
+                    <#elseif regifig == "620">
+                      <td><b>Régimen Fiscal: </b>620 - Sociedades Cooperativas de Producción que Optan por Diferir sus Ingresos</td>
+                      <#elseif regifig == "621">
+                      <td><b>Régimen Fiscal:</b>621 - Incorporación Fiscal</td>
+                        <#elseif regifig == "622">
+                      <td><b>Régimen Fiscal: </b>622 - Actividades Agrícolas, Ganaderas, Silvícolas Y Pesqueras</td>
+                          <#elseif regifig == "623">
+                      <td><b>Régimen Fiscal: </b>623 - Opcional para Grupos de Sociedades</td>
+                            <#elseif regifig == "624">
+                      <td><b>Régimen Fiscal: </b>624 - Coordinados</td>
+                              <#elseif regifig == "628">
+                      <td><b>Régimen Fiscal: </b>628 - Hidrocarburos</td>
+                                <#elseif regifig == "629">
+                      <td><b>Régimen Fiscal: </b>629 - De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales</td>
+                        <#elseif regifig == "630">
+                      <td><b>Régimen Fiscal: </b>630 - Enajenación de acciones en bolsa de valores</td>
+                    <#else>
+                      <td><b>Régimen Fiscal: </b></td>
+                    </#if>
                     </tr>
                 </table>
             </td>
@@ -586,7 +651,7 @@
     </table>
 
     <#if dataXML?has_content>
-        <#if dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR?is_sequence>
+        <#if dataXML.Complemento.Pagos.Pago.DoctoRelacionado?is_sequence>
             <#list dataXML.Complemento.Pagos.Pago.DoctoRelacionado as docDR>
                 <table class="itemtable" style="width: 100%; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
                     <tr style="margin-bottom:6px">
@@ -634,8 +699,8 @@
                     <tr style="border-top:2px;">
                         <td align="left" colspan="1"></td>
                     </tr>
-                    <#if dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR?is_sequence>
-                        <#list dataXML.Complemento.Pagos.Pago.DoctoRelacionado.ImpuestosDR.TrasladosDR.TrasladoDR as tax>
+                    <#if docDR.ImpuestosDR.TrasladosDR.TrasladoDR?is_sequence>
+                        <#list docDR.ImpuestosDR.TrasladosDR.TrasladoDR as tax>
                             <#--  Tabla de detalle de IVA  -->
                             <tr>
                                 <td id="impRel" align="left" colspan="1" style="margin-top: 2px;"><b>BaseDR</b></td>
